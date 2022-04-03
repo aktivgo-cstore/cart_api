@@ -1,8 +1,8 @@
 package service
 
 import (
+	"cart_api/internal/dtos"
 	"cart_api/internal/errors"
-	"cart_api/internal/models"
 	"cart_api/internal/repository"
 	"log"
 )
@@ -17,7 +17,7 @@ func NewCartService(cartRepository *repository.CartRepository) *CartService {
 	}
 }
 
-func (cs *CartService) GetCarts() ([]*models.Cart, *errors.ApiError) {
+func (cs *CartService) GetCarts() ([]*dtos.Cart, *errors.ApiError) {
 	carts, err := cs.CartRepository.GetCarts()
 	if err != nil {
 		log.Println("unable to get carts: " + err.Error())
@@ -25,4 +25,14 @@ func (cs *CartService) GetCarts() ([]*models.Cart, *errors.ApiError) {
 	}
 
 	return carts, nil
+}
+
+func (cs *CartService) GetCart(id int) (*dtos.Cart, *errors.ApiError) {
+	cart, err := cs.CartRepository.GetCart(id)
+	if err != nil {
+		log.Println("unable to get carts: " + err.Error())
+		return nil, errors.InternalServerError(err)
+	}
+
+	return cart, nil
 }
