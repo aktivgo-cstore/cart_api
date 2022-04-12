@@ -23,6 +23,17 @@ func NewCartController(cartService *service.CartService) *CartController {
 func (cc *CartController) GetCarts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
+	token, er := service.GetToken(r.Header)
+	if er != nil {
+		helpers.ErrorResponse(w, er.Message, er.Status)
+		return
+	}
+
+	if er = service.CheckAccess(token); er != nil {
+		helpers.ErrorResponse(w, er.Message, er.Status)
+		return
+	}
+
 	carts, er := cc.CartService.GetCarts()
 	if er != nil {
 		helpers.ErrorResponse(w, er.Message, er.Status)
@@ -43,6 +54,12 @@ func (cc *CartController) GetCarts(w http.ResponseWriter, r *http.Request) {
 func (cc *CartController) GetCart(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
+	token, er := service.GetToken(r.Header)
+	if er != nil {
+		helpers.ErrorResponse(w, er.Message, er.Status)
+		return
+	}
+
 	idStr, ok := mux.Vars(r)["id"]
 	if !ok {
 		log.Println("unable to encode var [id]")
@@ -55,6 +72,13 @@ func (cc *CartController) GetCart(w http.ResponseWriter, r *http.Request) {
 		log.Println("unable to convert id")
 		helpers.ErrorResponse(w, "Внутренняя ошибка сервера", http.StatusInternalServerError)
 		return
+	}
+
+	if er = service.CheckAccess(token); er != nil {
+		if er = service.CheckUserAccess(token, id); er != nil {
+			helpers.ErrorResponse(w, er.Message, er.Status)
+			return
+		}
 	}
 
 	cart, er := cc.CartService.GetCart(id)
