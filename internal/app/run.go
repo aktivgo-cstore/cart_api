@@ -28,7 +28,10 @@ func Run() error {
 	cartController := controllers.NewCartController(cartService)
 
 	router.HandleFunc("/carts", cartController.GetCarts).Methods("GET")
-	router.HandleFunc("/carts/{id}", cartController.GetCart).Methods("GET")
+	router.HandleFunc("/carts/{user_id}", cartController.GetCart).Methods("GET")
+	router.HandleFunc("/carts/{user_id}", cartController.AddProduct).Methods("POST")
+	router.HandleFunc("/carts/{user_id}/delete", cartController.DeleteProduct).Methods("POST")
+	router.HandleFunc("/carts/{user_id}/clear", cartController.Clear).Methods("GET")
 
 	log.Println("Users api server started on port " + port)
 	if err := http.ListenAndServe(":"+port, router); err != nil {
