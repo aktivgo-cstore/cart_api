@@ -45,14 +45,15 @@ func (cs *CartService) AddProduct(userID int, productID int) *errors.ApiError {
 		return errors.InternalServerError(err)
 	}
 
-	cartID := cart.ID
-
+	var cartID int
 	if cart == nil {
 		cartID, err = cs.CartRepository.CreateCart(userID)
 		if err != nil {
 			log.Println("unable to create cart: " + err.Error())
 			return errors.InternalServerError(err)
 		}
+	} else {
+		cartID = cart.ID
 	}
 
 	product, err := cs.CartRepository.GetProduct(cartID, productID)
