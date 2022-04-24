@@ -90,6 +90,12 @@ func (cc *CartController) GetCart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if cart == nil {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("{}"))
+		return
+	}
+
 	if len(cart.Items) == 0 {
 		cart.Items = make([]*dtos.CartProduct, 0)
 	}

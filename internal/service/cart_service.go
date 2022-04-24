@@ -35,6 +35,20 @@ func (cs *CartService) GetCartByUserID(userID int) (*dtos.Cart, *errors.ApiError
 		return nil, errors.InternalServerError(err)
 	}
 
+	if cart == nil {
+		_, err = cs.CartRepository.CreateCart(userID)
+		if err != nil {
+			log.Println("unable to create cart: " + err.Error())
+			return nil, errors.InternalServerError(err)
+		}
+	}
+
+	cart, err = cs.CartRepository.GetCartByUserID(userID)
+	if err != nil {
+		log.Println("unable to get cart: " + err.Error())
+		return nil, errors.InternalServerError(err)
+	}
+
 	return cart, nil
 }
 
