@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"cart_api/internal/dto"
+	"cart_api/internal/dtos"
 	"cart_api/internal/helpers"
 	"cart_api/internal/service"
 	"encoding/json"
@@ -87,6 +88,10 @@ func (cc *CartController) GetCart(w http.ResponseWriter, r *http.Request) {
 	if er != nil {
 		helpers.ErrorResponse(w, er.Message, er.Status)
 		return
+	}
+
+	if len(cart.Items) == 0 {
+		cart.Items = make([]*dtos.CartProduct, 0)
 	}
 
 	encode, err := json.Marshal(cart)
